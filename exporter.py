@@ -36,6 +36,7 @@ class DisplayData(bpy.types.Operator):
 
 def export_object_location(target_collection, start_frame, end_frame, scene):
     objects_data = object.Objects()
+    objects_data.fps = scene.render.fps
 
     for obj in target_collection.objects:
             object_data = object.Object()
@@ -56,6 +57,7 @@ def export_object_location(target_collection, start_frame, end_frame, scene):
 
 def export_vertices_location(target_collection, start_frame, end_frame, scene):
     objects_data = object.Objects()
+    objects_data.fps = scene.render.fps
 
     for obj in target_collection.objects:
             for v in obj.data.vertices:

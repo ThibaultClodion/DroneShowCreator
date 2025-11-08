@@ -69,6 +69,7 @@ class Object():
 class Objects():
 
     def __init__(self):
+        self.fps = 0
         self.nbObjects = 0
         self.objects = []
 
@@ -78,18 +79,20 @@ class Objects():
 
     def toJSON(self):
         return {
+            "fps": self.fps,
             "nbObjects": self.nbObjects,
             "objects": [obj.toJSON() for obj in self.objects]
         }
     
     def toBinary(self):
-        binary_data = struct.pack('I', self.nbObjects)
+        binary_data = struct.pack('I', self.fps)
+        binary_data += struct.pack('I', self.nbObjects)
 
         for obj in self.objects:
             binary_data += obj.toBinary()
 
         return binary_data
-    
+
     def saveToFile(self, filepath, filename, binary=False):
         if binary:
             if not filename.endswith(".bin"):
