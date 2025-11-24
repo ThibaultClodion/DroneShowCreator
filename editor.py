@@ -1,7 +1,7 @@
 import bpy
 
 class DroneShowExportPanel(bpy.types.Panel):
-    bl_label = "Drone Export"
+    bl_label = "Drone Show Export"
     bl_idname = "VIEW3D_PT_drone_export"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'

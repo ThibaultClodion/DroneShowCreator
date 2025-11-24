@@ -2,10 +2,10 @@ schema_version = "1.0.1"
 
 # Example of manifest file for a Blender extension
 # Change the values according to your extension
-id = "location_exporter"
-version = "1.0.1"
-name = "Location Exporter"
-tagline = "Extension that export location data to JSON and Binary files"
+id = "drone_show_creator"
+version = "1.0.2"
+name = "Drone Show Creator"
+tagline = "Extension to easily create Drone Show and export their data to JSON and Binary files"
 maintainer = "Thibault CLodion"
 # Supported types: "add-on", "theme"
 type = "add-on"
