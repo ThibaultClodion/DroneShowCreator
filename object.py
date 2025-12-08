@@ -1,6 +1,9 @@
 import json
 import struct
 
+# We want little-endian because FS runs on x86 & we read memory directly
+ENDIANNESS = "<"
+
 class Vector3():
 
     def __init__(self, x=0.0, y=0.0, z=0.0):
@@ -14,8 +17,8 @@ class Vector3():
     def toJSON(self):
         return {"x": self.x, "y": self.y, "z": self.z}
     
-    def toBinary(self):
-        return struct.pack('fff', self.x, self.y, self.z)
+    def toBinary(self, stream):
+        stream.write(struct.pack(ENDIANNESS+'fff', self.x, self.y, self.z))
 
 
 class KeyFrame():
@@ -35,8 +38,10 @@ class KeyFrame():
             "color": self.color.toJSON()
         }
     
-    def toBinary(self):
-        return struct.pack('I', self.frame) + self.position.toBinary() + self.color.toBinary()
+    def toBinary(self, stream):
+        stream.write(struct.pack(ENDIANNESS+'I', self.frame))
+        self.position.toBinary(stream)
+        self.color.toBinary(stream)
 
 class Object():
 
@@ -58,13 +63,11 @@ class Object():
             "keyframes": [kf.toJSON() for kf in self.keyframes]
         }
     
-    def toBinary(self):
-        binary_data = struct.pack('I', self.nbKeyFrames)
+    def toBinary(self, stream):
+        stream.write(struct.pack(ENDIANNESS+'I', self.nbKeyFrames))
 
         for kf in self.keyframes:
-            binary_data += kf.toBinary()
-
-        return binary_data
+            kf.toBinary(stream)
 
 class Objects():
 
@@ -84,14 +87,11 @@ class Objects():
             "objects": [obj.toJSON() for obj in self.objects]
         }
     
-    def toBinary(self):
-        binary_data = struct.pack('I', self.fps)
-        binary_data += struct.pack('I', self.nbObjects)
+    def toBinary(self, stream):
+        stream.write(struct.pack(ENDIANNESS+'II', self.fps, self.nbObjects))
 
         for obj in self.objects:
-            binary_data += obj.toBinary()
-
-        return binary_data
+            obj.toBinary(stream)
 
     def saveToFile(self, filepath, filename, binary=False):
         if binary:
@@ -99,7 +99,7 @@ class Objects():
                 filename += ".bin"
 
             with open(filepath + filename, 'wb') as f:
-                f.write(self.toBinary())
+                self.toBinary(f)
         else:
             if not filename.endswith(".json"):
                 filename += ".json"

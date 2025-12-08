@@ -38,19 +38,19 @@ def export_object_location(target_collection, start_frame, end_frame, scene):
     objects_data = object.Objects()
     objects_data.fps = scene.render.fps
 
-    for obj in target_collection.objects:
-            object_data = object.Object()
+    objs = [object.Object() for obj in target_collection.objects]
+    for frame in range(start_frame, end_frame + 1):
+        scene.frame_set(frame)  # Update the scene to this frame
+        print(f"{frame}/{end_frame}")
+        for i,obj in enumerate(target_collection.objects):
+            pos = obj.location
 
-            for frame in range(start_frame, end_frame + 1):
-                scene.frame_set(frame)  # Update the scene to this frame
-                pos = obj.location
+            keyframe = object.KeyFrame(frame=frame)
+            keyframe.position = object.Vector3(pos.x, pos.y, pos.z)
+            keyframe.color = object.Vector3(1.0, 1.0, 1.0)  # White by default
+            objs[i].addKeyFrame(keyframe)
 
-                keyframe = object.KeyFrame(frame=frame)
-                keyframe.position = object.Vector3(pos.x, pos.y, pos.z)
-                keyframe.color = object.Vector3(1.0, 1.0, 1.0)  # White by default
-                object_data.addKeyFrame(keyframe)
-
-            objects_data.addObject(object_data)
+    [objects_data.addObject(objdat) for objdat in objs]
 
     scene.frame_set(start_frame) # Reset to starting frame
     return objects_data
@@ -59,20 +59,19 @@ def export_vertices_location(target_collection, start_frame, end_frame, scene):
     objects_data = object.Objects()
     objects_data.fps = scene.render.fps
 
-    for obj in target_collection.objects:
-            for v in obj.data.vertices:
-                object_data = object.Object()
-
-                for frame in range(start_frame, end_frame + 1):
-                    scene.frame_set(frame)  # Update the scene to this frame
+    objs = [[object.Object() for v in obj.data.vertices] for obj in target_collection.objects]
+    for frame in range(start_frame, end_frame + 1):
+        scene.frame_set(frame)  # Update the scene to this frame
+        print(f"{frame}/{end_frame}")
+        for i,obj in enumerate(target_collection.objects):
+                for j,v in enumerate(obj.data.vertices):
                     co = obj.matrix_world @ v.co  # World coordinates of vertex
-
                     keyframe = object.KeyFrame(frame=frame)
                     keyframe.position = object.Vector3(co.x, co.y, co.z)
                     keyframe.color = object.Vector3(1.0, 1.0, 1.0)  # White by default
-                    object_data.addKeyFrame(keyframe)
-            
-                objects_data.addObject(object_data)
+                    objs[i][j].addKeyFrame(keyframe)
+
+    [[objects_data.addObject(vert) for vert in objdat] for objdat in objs]
 
     scene.frame_set(start_frame) # Reset to starting frame
     return objects_data
