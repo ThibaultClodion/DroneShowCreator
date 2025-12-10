@@ -8,15 +8,16 @@ def register():
     )
 
     location_types = [
-        ('OBJECT_LOCATION', "Object Location", "Export only the center location of object"),
-        ('VERTICES_LOCATION', "Vertices Location", "Export all vertices locations")
+        ('VERTICES_LOCATION', "Vertices Location", "Export all vertices locations"),
+        ('HALF_VERTICES_LOCATION', "Half Vertices Location", "Export half of the vertices locations"),
+        ('QUARTER_VERTICES_LOCATION', "Quarter Vertices Location", "Export quarter of the vertices locations"),
     ]
 
     bpy.types.Scene.export_mode = bpy.props.EnumProperty(
         name="Export Mode",
         description="Choose what to export for the drones",
         items=location_types,
-        default='OBJECT_LOCATION'
+        default='VERTICES_LOCATION'
     )
 
     data_formats = [

@@ -22,9 +22,7 @@ class DisplayData(bpy.types.Operator):
         print(f"Frame range: {start_frame} → {end_frame}")
         print(f"Export mode selected '{scene.export_mode}'\n")
 
-        if scene.export_mode == 'OBJECT_LOCATION':
-            objects_data = export_object_location(target_collection, start_frame, end_frame, scene)
-        elif scene.export_mode == 'VERTICES_LOCATION':
+        if scene.export_mode == 'VERTICES_LOCATION':
             objects_data = export_vertices_location(target_collection, start_frame, end_frame, scene)
         
         if scene.data_format == 'JSON':
@@ -33,27 +31,6 @@ class DisplayData(bpy.types.Operator):
             objects_data.saveToFile(bpy.path.abspath(scene.save_filepath), scene.save_filename, True)
 
         return {'FINISHED'}
-
-def export_object_location(target_collection, start_frame, end_frame, scene):
-    objects_data = object.Objects()
-    objects_data.fps = scene.render.fps
-
-    objs = [object.Object() for obj in target_collection.objects]
-    for frame in range(start_frame, end_frame + 1):
-        scene.frame_set(frame)  # Update the scene to this frame
-        print(f"{frame}/{end_frame}")
-        for i,obj in enumerate(target_collection.objects):
-            pos = obj.location
-
-            keyframe = object.KeyFrame(frame=frame)
-            keyframe.position = object.Vector3(pos.x, pos.y, pos.z)
-            keyframe.color = object.Vector3(1.0, 1.0, 1.0)  # White by default
-            objs[i].addKeyFrame(keyframe)
-
-    [objects_data.addObject(objdat) for objdat in objs]
-
-    scene.frame_set(start_frame) # Reset to starting frame
-    return objects_data
 
 def export_vertices_location(target_collection, start_frame, end_frame, scene):
     objects_data = object.Objects()
@@ -65,10 +42,10 @@ def export_vertices_location(target_collection, start_frame, end_frame, scene):
         print(f"{frame}/{end_frame}")
         for i,obj in enumerate(target_collection.objects):
                 for j,v in enumerate(obj.data.vertices):
-                    co = obj.matrix_world @ v.co  # World coordinates of vertex
+                    coordinates = obj.matrix_world @ v.co  # World coordinates of vertex
                     keyframe = object.KeyFrame(frame=frame)
-                    keyframe.position = object.Vector3(co.x, co.y, co.z)
-                    keyframe.color = object.Vector3(1.0, 1.0, 1.0)  # White by default
+                    keyframe.position = object.Vector3(coordinates.x, coordinates.y, coordinates.z)
+                    keyframe.color = object.Vector3(1.0, 1.0, 1.0) # Default white color
                     objs[i][j].addKeyFrame(keyframe)
 
     [[objects_data.addObject(vert) for vert in objdat] for objdat in objs]
