@@ -1,4 +1,4 @@
-#DroneShow Creator
+# DroneShowCreator
 This Blender add-on allow to export 3D models into data readable in another add-on made in FlightSimulator. 
 
 ## How to use it
