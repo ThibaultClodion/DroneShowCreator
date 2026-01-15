@@ -70,7 +70,6 @@ def duplicate_collection_with_decimate(target_collection, ratio):
             # Duplicate the object and its data
             new_obj = obj.copy()
             new_obj.data = obj.data.copy()
-            new_obj.animation_data_clear()
             
             # Link to new collection
             new_collection.objects.link(new_obj)
