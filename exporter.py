@@ -21,17 +21,71 @@ class DisplayData(bpy.types.Operator):
 
         print(f"--- Exporting frame-by-frame data for collection '{target_collection.name}' ---")
         print(f"Frame range: {start_frame} → {end_frame}")
-        print(f"Export mode selected '{scene.export_mode}'\n")
+        print(f"Decimation ratio: {scene.decimation_ratio}\n")
 
-        if scene.export_mode == 'VERTICES_LOCATION':
-            objects_data = export_vertices_location(target_collection, start_frame, end_frame, scene)
+        # Create duplicate collection with decimation if needed
+        decimation_ratio = scene.decimation_ratio
+        decimated_collection = None
+        export_collection = target_collection
         
-        if scene.data_format == 'JSON':
-            objects_data.saveToFile(bpy.path.abspath(scene.save_filepath), scene.save_filename, False)
-        elif scene.data_format == 'BINARY':
-            objects_data.saveToFile(bpy.path.abspath(scene.save_filepath), scene.save_filename, True)
+        if decimation_ratio < 1.0:
+            decimated_collection = duplicate_collection_with_decimate(target_collection, decimation_ratio)
+            export_collection = decimated_collection
+            print(f"Created decimated collection: '{decimated_collection.name}'")
+        
+        try:
+            objects_data = export_vertices_location(export_collection, start_frame, end_frame, scene)
+            
+            if scene.data_format == 'JSON':
+                objects_data.saveToFile(bpy.path.abspath(scene.save_filepath), scene.save_filename, False)
+            elif scene.data_format == 'BINARY':
+                objects_data.saveToFile(bpy.path.abspath(scene.save_filepath), scene.save_filename, True)
+        finally:
+            # Clean up decimated collection if user doesn't want to keep it
+            if decimated_collection and not scene.keep_decimated_collection:
+                delete_collection(decimated_collection)
+                print(f"Deleted decimated collection: '{decimated_collection.name}'")
 
         return {'FINISHED'}
+
+def delete_collection(collection):
+    """Delete a collection and all its objects"""
+    # Remove all objects from the collection
+    for obj in collection.objects:
+        bpy.data.objects.remove(obj, do_unlink=True)
+    
+    # Remove the collection itself
+    bpy.data.collections.remove(collection)
+
+def duplicate_collection_with_decimate(target_collection, ratio):
+    """Create a duplicate collection and apply decimate modifier to all mesh objects"""
+    # Create new collection
+    new_collection_name = f"{target_collection.name}_Decimated"
+    new_collection = bpy.data.collections.new(new_collection_name)
+    bpy.context.scene.collection.children.link(new_collection)
+    
+    # Duplicate objects and link to new collection
+    for obj in target_collection.objects:
+        if obj.type == 'MESH':
+            # Duplicate the object and its data
+            new_obj = obj.copy()
+            new_obj.data = obj.data.copy()
+            new_obj.animation_data_clear()
+            
+            # Link to new collection
+            new_collection.objects.link(new_obj)
+            
+            # Add and apply decimate modifier
+            decimate_mod = new_obj.modifiers.new(name="Decimate", type='DECIMATE')
+            decimate_mod.ratio = ratio
+            decimate_mod.decimate_type = 'COLLAPSE'
+            
+            # Apply the modifier
+            bpy.context.view_layer.objects.active = new_obj
+            with bpy.context.temp_override(object=new_obj):
+                bpy.ops.object.modifier_apply(modifier=decimate_mod.name)
+    
+    return new_collection
 
 def export_vertices_location(target_collection, start_frame, end_frame, scene):
     objects_data = object.Objects()

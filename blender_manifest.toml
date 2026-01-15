@@ -1,9 +1,9 @@
-schema_version = "1.0.1"
+schema_version = "1.1.1"
 
 # Example of manifest file for a Blender extension
 # Change the values according to your extension
 id = "drone_show_creator"
-version = "1.0.2"
+version = "1.1.0"
 name = "Drone Show Creator"
 tagline = "Extension to easily create Drone Show and export their data to JSON and Binary files"
 maintainer = "Thibault CLodion"

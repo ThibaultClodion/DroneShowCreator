@@ -7,17 +7,14 @@ def register():
         type=bpy.types.Collection,
     )
 
-    location_types = [
-        ('VERTICES_LOCATION', "Vertices Location", "Export all vertices locations"),
-        ('HALF_VERTICES_LOCATION', "Half Vertices Location", "Export half of the vertices locations"),
-        ('QUARTER_VERTICES_LOCATION', "Quarter Vertices Location", "Export quarter of the vertices locations"),
-    ]
-
-    bpy.types.Scene.export_mode = bpy.props.EnumProperty(
-        name="Export Mode",
-        description="Choose what to export for the drones",
-        items=location_types,
-        default='VERTICES_LOCATION'
+    bpy.types.Scene.decimation_ratio = bpy.props.FloatProperty(
+        name="Decimation Ratio",
+        description="Ratio of vertices to keep (1.0 = all vertices, 0.0 = maximum decimation)",
+        default=1.0,
+        min=0.0,
+        max=1.0,
+        step=1,
+        precision=2
     )
 
     data_formats = [
@@ -46,9 +43,16 @@ def register():
         subtype='FILE_NAME'
     )
 
+    bpy.types.Scene.keep_decimated_collection = bpy.props.BoolProperty(
+        name="Keep Decimated Collection",
+        description="Keep the decimated collection visible after export (if unchecked, it will be deleted)",
+        default=False
+    )
+
 def unregister():
     del bpy.types.Scene.target_collection
-    del bpy.types.Scene.export_mode
+    del bpy.types.Scene.decimation_ratio
     del bpy.types.Scene.data_format
     del bpy.types.Scene.save_filepath
     del bpy.types.Scene.save_filename
+    del bpy.types.Scene.keep_decimated_collection

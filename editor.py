@@ -12,7 +12,8 @@ class DroneShowExportPanel(bpy.types.Panel):
         scene = context.scene
 
         layout.prop(scene, "target_collection")
-        layout.prop(scene, "export_mode")
+        layout.prop(scene, "decimation_ratio")
+        layout.prop(scene, "keep_decimated_collection")
         layout.prop(scene, "data_format")
         layout.prop(scene, "save_filepath")
         layout.prop(scene, "save_filename")
