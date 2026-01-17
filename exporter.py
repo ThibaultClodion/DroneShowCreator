@@ -88,7 +88,7 @@ def duplicate_collection_with_decimate(target_collection, ratio):
 def export_vertices_location(target_collection, start_frame, end_frame, scene):
     objects_data = object.Objects()
     objects_data.fps = scene.render.fps
-    objects = [[object.Object() for v in obj.data.vertices] for obj in target_collection.objects]
+    objects = [[object.Object() for v in obj.data.vertices] for obj in target_collection.objects if obj.type == 'MESH']
 
     # Precompute vertex colors
     vertex_colors = compute_color_cache(target_collection)
@@ -98,7 +98,7 @@ def export_vertices_location(target_collection, start_frame, end_frame, scene):
         scene.frame_set(frame)
         
         # Process each object in the collection
-        for i, obj in enumerate(target_collection.objects):
+        for i, obj in enumerate([o for o in target_collection.objects if o.type == 'MESH']):
             matrix = obj.matrix_world
     
             # Process each vertex of the object
