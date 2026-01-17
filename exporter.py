@@ -44,7 +44,6 @@ class DisplayData(bpy.types.Operator):
             # Clean up decimated collection if user doesn't want to keep it
             if decimated_collection and not scene.keep_decimated_collection:
                 delete_collection(decimated_collection)
-                print(f"Deleted decimated collection: '{decimated_collection.name}'")
 
         return {'FINISHED'}
 
