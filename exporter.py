@@ -129,15 +129,29 @@ def compute_color_cache(target_collection):
         # By default, white color
         colors = np.ones((num_verts, 4), dtype=np.float32)
         
-        # Find image texture if exists
+        # Find image texture or base color from material
         image = None
+        base_color = None
         if obj.material_slots and obj.material_slots[0].material:
             mat = obj.material_slots[0].material
             if mat.use_nodes:
+                # Look for image texture
                 for node in mat.node_tree.nodes:
                     if node.type == 'TEX_IMAGE' and node.image:
                         image = node.image
                         break
+                
+                # If no image texture, check for Principled BSDF base color
+                if not image:
+                    for node in mat.node_tree.nodes:
+                        if node.type == 'BSDF_PRINCIPLED':
+                            base_color_input = node.inputs.get('Base Color')
+                            if base_color_input:
+                                base_color = base_color_input.default_value
+                            break
+            else:
+                # For non-node materials, use diffuse color
+                base_color = mat.diffuse_color
         
         if image and mesh.uv_layers:
             width, height = image.size
@@ -185,6 +199,11 @@ def compute_color_cache(target_collection):
             
             # Fetch colors for each vertex
             colors = pixel_data[y, x]
+        elif base_color:
+            # Use material base color for all vertices
+            colors[:, 0] = base_color[0]
+            colors[:, 1] = base_color[1]
+            colors[:, 2] = base_color[2]
             
         # Append RGB colors (ignore alpha for now)
         vertex_colors_cache.append(colors[:, :3].tolist())
