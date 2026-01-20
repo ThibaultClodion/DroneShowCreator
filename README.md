@@ -1,5 +1,5 @@
 # DroneShowCreator
-This Blender add-on allow to export 3D models into data readable in another add-on made in FlightSimulator. 
+This Blender add-on allow to export 3D models into data readable by [DroneShowFS24Player](https://github.com/djpadbit/DroneShowFS24Player)
 
 ## How to use it
 Don't use directly the Add-on into Blender, as recommended by Blender, create a symbolic link instead
