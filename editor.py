@@ -19,7 +19,7 @@ class DroneShowExportPanel(bpy.types.Panel):
         col.label(text="       \\      DroneShow         /             >>    Thibault Clodion   <<")
         col.label(text="        \\____________________/              >> Pablo Couprie-Diaz <<")
         col.label(text="        /                                  \\              >>         Peizhe Liu         <<")
-        col.label(text="       /       MSFS2024         \\            >>  Jounaïd Boudefar   <<")
+        col.label(text="       /       MSFS2024         \\             >>  Jounaïd Boudefar   <<")
         col.label(text="  [---]                              [---]       >>      Iwan Derouet      <<")
         
         layout.separator()
