@@ -5,7 +5,7 @@ A powerful Blender add-on for creating and exporting drone show animations. This
 ## Features
 
 - **Collection-based Export**: Select any Blender collection to export its animation data
-- **Frame-by-frame Animation**: Captures position and color data for every frame
+- **Frame-by-frame Animation**: Captures position every frame
 - **Mesh Decimation**: Reduce vertex count to optimize file size without recreating models
 - **Dual Export Formats**:
   - **Binary**: Optimized format for the MFSM2024 system (little-endian)
@@ -19,11 +19,11 @@ A powerful Blender add-on for creating and exporting drone show animations. This
 
 ### Using Symbolic Link (Recommended)
 
-Don't install the add-on directly into Blender. Instead, create a symbolic link to enable easier development and updates:
+Don't put the add-on directly into Blender. Instead, create a symbolic link to enable easier development and updates:
 
 **Windows:**
 ```powershell
-mklink /D "C:\BlenderAddons\DroneShowCreator" "C:\Path\To\Your\DroneShowCreator"
+mklink /D "C:\BlenderAddons\DroneShowCreator" "C:\PathToYour\DroneShowCreator"
 ```
 
 **Linux/macOS:**
@@ -34,7 +34,7 @@ ln -s /path/to/your/DroneShowCreator ~/BlenderAddons/DroneShowCreator
 Then in Blender:
 1. Go to **Edit > Preferences > Get Extensions**
 2. Navigate to the **Repositories** settings
-3. Add your local repository: `C:\BlenderAddons\DroneShowCreator` (or your path)
+3. Add your local repository: `C:\BlenderAddons\DroneShowCreator` (or your path if you dont want to use Symbolic Link)
 4. Enable the "Drone Show Creator" extension
 
 ### Requirements
@@ -86,7 +86,6 @@ Each exported file contains:
 - **Keyframes**: For each object, frame-by-frame data including:
   - Frame number
   - Position (x, y, z in world coordinates)
-  - Color (r, g, b from texture or material)
 
 ## Project Structure
 
